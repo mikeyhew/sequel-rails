@@ -74,7 +74,6 @@ module SequelRails
     initializer 'sequel.spring' do |_app|
       if defined?(::Spring::Application)
         ::Spring::Application.prepend ::SequelRails::SpringSupport
-        end
       end
     end
 
