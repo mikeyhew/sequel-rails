@@ -14,15 +14,18 @@ module Sequel
       def create_migration_file
         set_local_assigns!
         validate_file_name!
-        migration_template 'migration.rb.erb', "db/migrate/#{file_name}.rb"
+        migration_template (template_file_name || 'migration.rb.erb'), "db/migrate/#{file_name}.rb"
       end
 
-      attr_reader :migration_action, :table_action, :column_action, :use_change
+      attr_reader :migration_action, :table_action, :column_action, :use_change, :template_file_name
 
       protected
 
       def set_local_assigns!
-        if file_name =~ /^(add|drop|remove)_.*_(?:to|from)_(.*)/
+        if file_name =~ /^add_timestamps_to_(.*)/
+          @template_file_name = 'timestamps_migration.rb.erb'
+          @table_name = Regexp.last_match[1].pluralize
+        elsif file_name =~ /^(add|drop|remove)_.*_(?:to|from)_(.*)/
           column_action = Regexp.last_match[1]
           set_alter!(
             Regexp.last_match[2].pluralize,
